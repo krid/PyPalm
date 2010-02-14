@@ -1,0 +1,10 @@
+2010-02-13  Dirk Bergstrom  <krid@otisbean.com>
+
+	* pypalm/lang.py: Substantially rewritten to expand functionality.
+
+	* README: Edit for clarity, wrap lines, and expand the 'localize' for
+	new functionality.
+	
+	* pypalm/pypalm.py: Add a call to main_func() so the file can be run
+	without being installed via setuptools (eg. for testing).
+	(main_func): Tidy up usage output.  

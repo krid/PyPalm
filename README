@@ -1,6 +1,8 @@
 # PyPalm
 
-PyPalm is an easy tool that should help to work with the Palm webOS SDK from the command line. Basically it should be used as a shortcut replacement for the native tools.
+PyPalm is tool to simplify working with the Palm webOS SDK from the command
+line.  It is a wrapper for the various native command-line tools that handles
+common options and paths.
 
 Pypalm can be easily installed via 
 
@@ -15,7 +17,8 @@ or
    git clone git://github.com/grundprinzip/PyPalm.git && cd PyPalm && sudo python setup.py install
 
 
-When installed PyPalm has installed a command line script that has the following options:
+When installed PyPalm provides a command line script that has the following
+options:
 
 - install - install the current version on the device
 - debug - launch a connection to the device
@@ -27,7 +30,7 @@ When installed PyPalm has installed a command line script that has the following
 - clean - remove all ipk file
 - localize - generate and update localization files
 
-All the stupid default information is directly extracted from appinfo.json file.
+All the default information is directly extracted from appinfo.json file.
 
 To execute run
 
@@ -35,21 +38,40 @@ pypalm --help
 
 ## new_scene
 
-To create a new scene in you application you have to execute the `pypalm new_scene [name]` command. This will than generate the necessary files as it is done by the original Palm tools.
+To create a new scene in you application you have to execute the
+`pypalm new_scene [name]` command. This will then generate the necessary
+files as it is done by the original Palm tools.
 
 ## localize
 
-When developing mobile applications it becomes very important to localize the content of the application for multiple countries. The disadvantage of the current version of the Palm WebOS developer tools is that they do not support localization in an automatic way. To help the developer PyPalm comes with a command called localize.
+When developing mobile applications it becomes very important to localize the
+content of the application for multiple countries. The disadvantage of the
+current version of the Palm WebOS developer tools is that they do not support
+localization in an automatic way. To help the developer PyPalm comes with a
+command called localize.
 
-Localize will scan all application source files and check for method calls with $L(...) it will extract the key and create an entrie in the language catalog. For all supported languages it will create or update the necessary files in the folders under resources/[lang]/strings.json.
+Localize will scan all application source files and check for method calls
+with $L(...) it will extract the key and create an entry in the language
+catalog.  For all supported languages it will create or update the necessary
+files in the folders under resources/[locale]/.  For each language, two files
+are created: lexicon.json and strings.json.
 
-To specify which languages are supported the framework_config.json file has to be edited. A sampel config file would look like this
+lexicon.json is intended to be used by the translator; it is a dictionary
+organized according to the javascript source file(s) the key strings appear
+in.  This will help the translator to understand the context of the text.
+strings.json is used by the webOS framework when running the app.  PyPalm
+will (re)generate strings.json from lexicon.json when you run `localize`
+after the translator is done.
+
+To specify which languages are supported add a "languages" key to the
+framework_config.json file in the root directory of your app.  The value
+should be a list of the locales for which you have or want translations.
+A sample config file would look like this
 
    {
-	"languages" : ["de_de"]
+	"languages" : ["de_de", "es_es"]
    }
 
 
-The `languages` key is checked by PyPalm to generate the right files for localization.
-
-
+PyPalm reads the `languages` key to determine the languages to generate files
+for localization.

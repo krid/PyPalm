@@ -23,18 +23,18 @@ def main_func():
 
 Use PyPalm to control your development process on the webOS device.
 
-    install - installs the current version of the app on the device
-    package - package the current version
-    deploy - package and deploy
-    debug - start the debugger
-    log - get log output from the device
-    clean - remove old IPK files
+    install - Install the current version of the app on the device
+    package - Package the current version
+    deploy - Package, deploy and start the app on the device
+    debug - Start the debugger
+    log - Get log output from the device
+    clean - Remove old .ipk files
     remove - Uninstall the application
-    start - Start the application
+    start - Start the application on the device
     stop - Kill the application
-    new_scene - Create a new scene named 'name'
-    emulator - start the emulator
-    localize - read all langu data and write the strings file and update the old ones"""
+    new_scene name - Create a new scene named 'name'
+    emulator - Start the emulator
+    localize - Create or update localization files"""
 
     usage += "\n\n    v%s (c) Martin Grund\n" % VERSION
     
@@ -107,3 +107,5 @@ Use PyPalm to control your development process on the webOS device.
     elif args[0] == "localize":
         localize(current_dir, quiet=QUIET)
         
+if __name__ == '__main__':
+    main_func()
