@@ -1,3 +1,8 @@
+2010-02-21  Dirk Bergstrom  <krid@otisbean.com>
+
+	* pypalm/lang.py (process_js_files): Use two regexes to harvest $L strings,
+	one for $L("blah"), another for $L({key: "a blah string", value: "blah"}).
+
 2010-02-13  Dirk Bergstrom  <krid@otisbean.com>
 
 	* pypalm/lang.py: Substantially rewritten to expand functionality.
@@ -7,4 +12,4 @@
 	
 	* pypalm/pypalm.py: Add a call to main_func() so the file can be run
 	without being installed via setuptools (eg. for testing).
-	(main_func): Tidy up usage output.  
+	(main_func): Tidy up usage output.

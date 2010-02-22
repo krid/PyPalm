@@ -29,9 +29,26 @@ def get_files(current_dir):
 def process_js_files(files):
     """ Create a dict of the form {key: {fname1: 1, fname2: 1}, key2:...}. """
     lang_dict = {}
-    # Matches both $L("A string") and $L({key="a blah string", value="blah"})
+    # Matches $L("A string")
+    simple_string_regexp = re.compile(r"""
+        \$L\(                  # Begin L10N call
+        \s*                    # optional whitespace
+        (["'])                 # opening quote
+        (.*?)                  # The "key" value we want to extract
+        (?<!\\)\1              # matching close quote, not backslashed
+        \s*                    # optional trailing whitespace
+        \)""", re.DOTALL|re.VERBOSE)
+    # Matches $L({key: "a blah string", value: "blah"})
     # independent of the order in which key & value appear.
-    exp = re.compile(r"""\$L\(.*?(?:key=)?["'](.*?)["'](,.*)?\)""", re.M)
+    key_val_regexp = re.compile(r"""
+        \$L\(\{                # Begin L10N call, wrapped in curlies
+        .*?                    # optional junk (like a "value:" bit)
+        key:\s*                # "key:" bit
+        (["'])                 # opening quote
+        (.*?)                  # The "key" value we want to extract
+        (?<!\\)\1              # matching close quote, not backslashed
+        .*?                    # optional trailing junk (like a "value:" bit)
+        \}\)""", re.DOTALL|re.VERBOSE)
     
     for relative_path, full_path in files:
         log("Processing %s" % relative_path)
@@ -42,8 +59,11 @@ def process_js_files(files):
         data = fid.read()
         
         # Now find all $L constructs and tag with the relative path
-        for matches in exp.findall(data):
-            key = matches[0].strip()
+        for matches in key_val_regexp.findall(data):
+            key = matches[1].strip()
+            lang_dict.setdefault(key, {})[relative_path] = 1
+        for matches in simple_string_regexp.findall(data):
+            key = matches[1].strip()
             lang_dict.setdefault(key, {})[relative_path] = 1
 
     return lang_dict
@@ -128,7 +148,8 @@ def merge_data(old_lang, old_strings, new_lang):
     
     # Look thru existing lexicon translations and keep the ones that still
     # have keys in the code.  These values are used in preference to data in
-    # strings.json
+    # strings.json.  Note that when we read lexicon.json from disk we discard
+    # untranslated keys.
     for k, v in old_lang.iteritems():
         if k in new_lang:
             # We have an existing translation value for this key.  Use the
